@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <CommunicationClass name="net.wanzenberg.ulf.mymdi.notused.AS400ReadDBFileX"
+        x="386" y="167"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.CloseApplicationListener"
+        x="609" y="575"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.ApplicationMain" x="374" y="610"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.notused.PanelMetadataJPanel" x="352" y="425"/>
+    <CommunicationClass name="net.wanzenberg.ulf.mymdi.database.DB_sqlite"
+        x="164" y="243"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.ApplicationMain.jTableMetadataListener"
+        x="351" y="660"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.common.MyOwnTableCellRenderer" x="566" y="304"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.MetadataDetailJFrame" x="134" y="129"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.ApplicationMain.RefreshListener"
+        x="221" y="564">
+        <Communication destinationClassName="net.wanzenberg.ulf.mymdi.main.ApplicationMain"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.ApplicationMain.internalFrameListener"
+        x="359" y="709"/>
+    <CommunicationClass name="net.wanzenberg.ulf.mymdi.notused.ChangeMetadata"
+        x="239" y="399"/>
+    <CommunicationClass
+        name="net.wanzenberg.ulf.mymdi.main.ChangePerspectiveListener"
+        x="682" y="660"/>
+</ClassDiagram>
