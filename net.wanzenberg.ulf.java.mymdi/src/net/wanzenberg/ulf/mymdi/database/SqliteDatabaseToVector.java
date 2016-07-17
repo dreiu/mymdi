@@ -22,8 +22,12 @@ import java.util.Vector;
 
 import net.wanzenberg.ulf.mymdi.common.Constants;
 
-
-public class DBSqliteToVector { 
+//********************************************************************************
+//********************************************************************************
+//Klasse SqliteDatabaseToVector
+//********************************************************************************
+//********************************************************************************
+public class SqliteDatabaseToVector { 
 
     /** ++++++++++++++++++++++++++++++++++++++++++++++
      * ...
@@ -37,7 +41,7 @@ public class DBSqliteToVector {
     public Vector<String> columnNames = new Vector<String>();
     public Vector<Vector> data = new Vector<Vector>();
     
-    private static final DBSqliteToVector dbcontroller = new DBSqliteToVector(); 
+    private static final SqliteDatabaseToVector dbcontroller = new SqliteDatabaseToVector(); 
     private static Connection connection; 
 
     // 20160328-1316-A 
@@ -54,25 +58,24 @@ public class DBSqliteToVector {
         } 
     } 
 
-    
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-    *  constructor methods
-    * +++++++++++++++++++++++++++++++++++++++++++++++
-    */
-    /** ----------------------------------------------
-    *  1st constructor ...
-    * -----------------------------------------------
-    */    
-    private DBSqliteToVector()
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 1st constructor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    private SqliteDatabaseToVector()
     {
         System.out.println( "1st constructor");
     } 
      
-    /** ----------------------------------------------
-    *  2nd constructor ...
-    * -----------------------------------------------
-    */    
-    public DBSqliteToVector(String parm_my_database, String parm_my_sql_statement, String parm_my_sql_statement_type) throws SQLException, ClassNotFoundException
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 2nd constuctor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public SqliteDatabaseToVector(String parm_my_database, String parm_my_sql_statement, String parm_my_sql_statement_type) throws SQLException, ClassNotFoundException
     { 
         System.out.println( "2nd constructor");
 
@@ -88,19 +91,18 @@ public class DBSqliteToVector {
         }
         else
             if (parm_my_sql_statement_type == "TST")
-                this.getSQLResultArray();
+                this.getResultArray();
             else
                 this.populateVector(); 
     } 
 
-    // ----------------------------------------------
-    //  3rd constructor ...
-    // -----------------------------------------------
-    /** ----------------------------------------------
-    *  3rd constructor ...
-    * -----------------------------------------------
-    */     
-    DBSqliteToVector(String parm_my_database, String parm_my_sql_statement, String parm_my_sql_statement_type, String parm_my_expected_result_type)
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 3rd constuctor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    SqliteDatabaseToVector(String parm_my_database, String parm_my_sql_statement, String parm_my_sql_statement_type, String parm_my_expected_result_type)
     { 
         System.out.println( "3rd constructor");
     	
@@ -110,28 +112,30 @@ public class DBSqliteToVector {
       
         //DBController dbc = DB_sqlite.getInstance(); 
         //this.handleDBConnection(); 
-        this.singleDataset(); 
+        this.getSingleDataset(); 
     } 
     
    
     
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-    *  accessor methods
-    * +++++++++++++++++++++++++++++++++++++++++++++++
-    */    
-    /** ----------------------------------------------
-    *  getInstance()
-    *  ...
-    * -----------------------------------------------
-    */
-    public static DBSqliteToVector getInstance(){ 
+    // ++++++++++++++++++++++++++++++++++++++++++++++
+    //  accessor methods
+    // +++++++++++++++++++++++++++++++++++++++++++++++
+	// =METHODE========================================================================
+	// ================================================================================
+	// ... getInstance
+	// ================================================================================
+	// ================================================================================
+    public static SqliteDatabaseToVector getInstance(){ 
         return dbcontroller; 
     } 
      
-    /** ----------------------------------------------
-    * ... handleDBConnection
-    * -----------------------------------------------
-    */
+    
+    
+	// =METHODE========================================================================
+	// ================================================================================
+	// ... handleDBConnection
+	// ================================================================================
+	// ================================================================================
     private void handleDBConnection() { 
         /** ----------------------------------------------
         *  ... 
@@ -168,53 +172,108 @@ public class DBSqliteToVector {
     } 
 
     
-    /** ----------------------------------------------
-     *  get ...
-     * -----------------------------------------------
-     */
-public String[] getSQLResultArray() throws SQLException, ClassNotFoundException{
+    
+	// =METHODE========================================================================
+	// ================================================================================
+	// ... getSQLResultArray
+	// ================================================================================
+	// ================================================================================
+    public String[] getResultArray() throws SQLException, ClassNotFoundException{
+        System.out.println("Klasse SqliteDatabaseToVector Methode: getSQLResultArray()");
+	
+		ArrayList<String> a = new ArrayList<String>();
 
-    System.out.println( "getSQLResultArray_a");
-
-	ArrayList<String> a = new ArrayList<String>();
-
-    Statement stmt = connection.createStatement(); 
-
-    //Class.forName(sqlDriver);
-    //Connection con = DriverManager.getConnection(dtbSet, dtbUsername, dtbPassword);
-    //PreparedStatement ps = Connection.prepareStatement("SELECT room_name FROM "+ dtbTbl2);
-    //ResultSet rs = ps.executeQuery();
-    ResultSet rs = stmt.executeQuery(mySQLStatement); 
-       //System.out.println( "getSQLResultArray(): SQL: " + mySQLStatement);
-       
-    ResultSetMetaData rsmd = rs.getMetaData();
-    int columnsNumber = rsmd.getColumnCount();   
-       
-    while(rs.next())
-    {
-        //  Get columns
-        for (int i = 1; i <= columnsNumber; i++) {
-            a.add(rs.getString(i));
-        }        
-        
-        //System.out.println( "getSQLResultArray(): ResultSet" + rs.getString(1) + "_" + rs.getString(2) + "_" + rs.getString(3));
+		Statement stmt = connection.createStatement(); 
+	
+	    //Class.forName(sqlDriver);
+	    //Connection con = DriverManager.getConnection(dtbSet, dtbUsername, dtbPassword);
+	    //PreparedStatement ps = Connection.prepareStatement("SELECT room_name FROM "+ dtbTbl2);
+	    //ResultSet rs = ps.executeQuery();
+	    ResultSet rs = stmt.executeQuery(mySQLStatement); 
+	       //System.out.println( "getSQLResultArray(): SQL: " + mySQLStatement);
+	       
+	    ResultSetMetaData rsmd = rs.getMetaData();
+	    int columnsNumber = rsmd.getColumnCount();   
+	       
+	    while(rs.next())
+	    {
+	        //  Get columns
+	        for (int i = 1; i <= columnsNumber; i++) {
+	            a.add(rs.getString(i));
+	        }        
+	    }
+	
+	    return (String[]) a.toArray(new String[a.size()]);
+    
     }
 
-    System.out.println("getSQLResultArray_e");
-
-    return (String[]) a.toArray(new String[a.size()]);
     
-}
+    
+	// =METHODE========================================================================
+	// ================================================================================
+	// singleDataset
+	// ================================================================================
+	// ================================================================================
+    private void getSingleDataset() { 
+        try { 
+            Statement stmt = connection.createStatement(); 
+            int columns1;
 
+            ResultSet rs1 = stmt.executeQuery("SELECT * FROM it_object WHERE object_id = 2"); 
+
+            
+            /** ----------------------------------------------
+            *  ... column names to vector
+            * -----------------------------------------------
+            */  
+            ResultSetMetaData md = rs1.getMetaData();
+            columns1 = md.getColumnCount();
+
+            //  Get column names
+            for (int i = 1; i <= columns1; i++) {
+                columnNames.addElement( md.getColumnName(i) );
+                //System.out.println(md.getColumnName(i));
+            }
+            
+            
+            /** ----------------------------------------------
+            *  ... row values to vector
+            * -----------------------------------------------
+            */  
+            while (rs1.next()) { 
+                //Vector<Object> row = new Vector<Object>(columns);
+                for (int i = 1; i <= columns1; i++) 
+                {
+                    //row.addElement( rs.getObject(i) );
+                    //System.out.println( rs1.getObject(i) );
+                }
+                //data.addElement( row );
+                //System.out.println( row );
+            } 
+            
+            rs1.close();
+            
+            connection.close(); 
+            System.out.println("Connection closed");
+            
+        } catch (SQLException e) { 
+            System.err.println("Couldn't handle DB-Query"); 
+            e.printStackTrace(); 
+        } 
+    } 
+    
+    
+    
 
     /** ++++++++++++++++++++++++++++++++++++++++++++++
      *  mutator methods
      * +++++++++++++++++++++++++++++++++++++++++++++++
      */
-    /** ----------------------------------------------
-     *  set ...
-     * -----------------------------------------------
-     */
+	// =METHODE========================================================================
+	// ================================================================================
+	// ... populateVector
+	// ================================================================================
+	// ================================================================================
     private void populateVector() { 
         try { 
             Statement stmt = connection.createStatement(); 
@@ -268,57 +327,6 @@ public String[] getSQLResultArray() throws SQLException, ClassNotFoundException{
         } 
     } 
 
-    /** ----------------------------------------------
-     *  NEE set ...
-     * -----------------------------------------------
-     */
-    private void singleDataset() { 
-        try { 
-            Statement stmt = connection.createStatement(); 
-            int columns1;
-
-            ResultSet rs1 = stmt.executeQuery("SELECT * FROM it_object WHERE object_id = 2"); 
-
-            
-            /** ----------------------------------------------
-            *  ... column names to vector
-            * -----------------------------------------------
-            */  
-            ResultSetMetaData md = rs1.getMetaData();
-            columns1 = md.getColumnCount();
-
-            //  Get column names
-            for (int i = 1; i <= columns1; i++) {
-                columnNames.addElement( md.getColumnName(i) );
-                //System.out.println(md.getColumnName(i));
-            }
-            
-            
-            /** ----------------------------------------------
-            *  ... row values to vector
-            * -----------------------------------------------
-            */  
-            while (rs1.next()) { 
-                //Vector<Object> row = new Vector<Object>(columns);
-                for (int i = 1; i <= columns1; i++) 
-                {
-                    //row.addElement( rs.getObject(i) );
-                    //System.out.println( rs1.getObject(i) );
-                }
-                //data.addElement( row );
-                //System.out.println( row );
-            } 
-            
-            rs1.close();
-            
-            connection.close(); 
-            System.out.println("Connection closed");
-            
-        } catch (SQLException e) { 
-            System.err.println("Couldn't handle DB-Query"); 
-            e.printStackTrace(); 
-        } 
-    } 
     
 
     
@@ -368,7 +376,7 @@ public String[] getSQLResultArray() throws SQLException, ClassNotFoundException{
     // Der Interpreter nutzt diese Methode als Startpunkt für die Ausführung
     // des Programms und beendet es wenn ihr Ende erreicht ist
     public static void main(String[] args) { 
-        DB_sqlite dbc = DB_sqlite.getInstance(); 
+        AccessSqliteDatabase dbc = AccessSqliteDatabase.getInstance(); 
         dbc.handleDBConnection(); 
         dbc.populateVector(); 
     } 

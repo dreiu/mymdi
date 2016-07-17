@@ -14,6 +14,13 @@ import com.ibm.as400.access.ProgramParameter;
 
 import net.wanzenberg.ulf.mymdi.main.ApplicationMain;
 
+
+//********************************************************************************
+//********************************************************************************
+//Klasse RefreshListener
+//********************************************************************************
+//********************************************************************************
+
 class RefreshListener implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 
@@ -75,7 +82,7 @@ class RefreshListener implements ActionListener {
 		try {
 			myGregCal = anAS400System.getPreviousSignonDate();
 			// String myDate = myGregCal.toString();
-			myDate = myGregCal.get(Calendar.YEAR);
+			myDate = myGregCal.get(Calendar.YEAR) + myGregCal.get(Calendar.MONTH) + myGregCal.get(Calendar.DAY_OF_MONTH);
 
 		} catch (AS400SecurityException e) {
 			// TODO Auto-generated catch block

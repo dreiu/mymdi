@@ -8,7 +8,7 @@ package net.wanzenberg.ulf.mymdi;
 
 import java.sql.SQLException;
 
-import net.wanzenberg.ulf.mymdi.database.DBSqliteToVector;
+import net.wanzenberg.ulf.mymdi.database.SqliteDatabaseToVector;
 import net.wanzenberg.ulf.mymdi.common.Constants;
 
 
@@ -54,11 +54,11 @@ public class MetadataDetailJFrame extends javax.swing.JInternalFrame {
 		
 		System.out.println("SQL: " + mySqlStatement);
 		mySqlStatement_type = "TST";
-		DBSqliteToVector objectDetail = new DBSqliteToVector(myDatabase, mySqlStatement, myExpectedResultType);
+		SqliteDatabaseToVector objectDetail = new SqliteDatabaseToVector(myDatabase, mySqlStatement, myExpectedResultType);
 		// System.out.println( "Array: " +
 		// objectDetail.getSQLResultArray().toString());
 
-		resultarray = objectDetail.getSQLResultArray();
+		resultarray = objectDetail.getResultArray();
 		int size = resultarray.length;
 
 		System.out.println("size resultarray: " + size);

@@ -17,7 +17,7 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
-import net.wanzenberg.ulf.mymdi.database.DB_sqlite;
+import net.wanzenberg.ulf.mymdi.database.AccessSqliteDatabase;
 
 /**
  *
@@ -40,7 +40,7 @@ public class PanelMetadataJPanel extends javax.swing.JPanel {
 		// ------------------------------------------------------------------
 		myDatabase = "mywork.db";
 		mySQLStatement = "SELECT * FROM object_or_source_metadata";
-		DB_sqlite aSQLite_access = new DB_sqlite(myDatabase, mySQLStatement);
+		AccessSqliteDatabase aSQLite_access = new AccessSqliteDatabase(myDatabase, mySQLStatement);
 
 		/**
 		 * TableModel ...

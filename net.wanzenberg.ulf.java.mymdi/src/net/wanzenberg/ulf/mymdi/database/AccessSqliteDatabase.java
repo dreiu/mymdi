@@ -20,31 +20,31 @@ import java.util.Vector;
 
 import net.wanzenberg.ulf.mymdi.common.Constants;
 
-public class  DB_sqlite { 
+//********************************************************************************
+//********************************************************************************
+//Klasse DB_sqlite
+//********************************************************************************
+//********************************************************************************
+public class  AccessSqliteDatabase { 
 
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-     * ...
-     * +++++++++++++++++++++++++++++++++++++++++++++++
-     */
-    
+	// ================================================================================
+	// database, database access & SQL 
+	// ================================================================================
     private String myDatabase;
     private String mySQLStatement;
     private String mySQLStatementType;
-    
-    
-    public Vector<String> columnNames = new Vector<String>();
-    public Vector<Vector> data = new Vector<Vector>();
-    
-    private static final DB_sqlite dbcontroller = new DB_sqlite(); 
+    private static final AccessSqliteDatabase dbcontroller = new AccessSqliteDatabase(); 
     private static Connection connection; 
-    
     Statement stmt = null;
-
     //private static final String DB_PATH = System.getProperty("user.home") + "/" + "mywork.db"; 
     //private static final String DB_PATH = "C:/UWDEV/" + "mywork2.db"; 
     public String DB_PATH = myDatabase; 
     
 
+
+	// ================================================================================
+	// SQLite
+	// ================================================================================
     static { 
         try { 
             Class.forName("org.sqlite.JDBC"); 
@@ -55,56 +55,104 @@ public class  DB_sqlite {
     } 
 
     
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-    *  constructor methods
-    * +++++++++++++++++++++++++++++++++++++++++++++++
-    */
-    /** ----------------------------------------------
-    *  1st constructor ...
-    * -----------------------------------------------
-    */    
-    private DB_sqlite()
+    
+	// ================================================================================
+	// ... auxiliary variables 
+	// ================================================================================
+    public Vector<String> columnNames = new Vector<String>();
+    public Vector<Vector> data = new Vector<Vector>();
+    
+    
+    
+    
+	// =METHODE========================================================================
+	// ================================================================================
+	// !!! main
+	// ================================================================================
+	// ================================================================================
+    // Der Interpreter nutzt diese Methode als Startpunkt für die Ausführung
+    // des Programms und beendet es wenn ihr Ende erreicht ist
+    public static void main(String[] args) { 
+        //System.out.println("AccessSqliteDatabase___public static void main");
+        
+ 		// ================================================================================
+		// ================================================================================
+		// ... AccessSqliteDatabase
+		// ================================================================================
+		// ================================================================================
+    	AccessSqliteDatabase dbc = AccessSqliteDatabase.getInstance(); 
+        
+    	
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// handleDBConnection
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        dbc.handleDBConnection(); 
+        
+        
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// populateVector
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        dbc.populateVector(); 
+        
+    }     
+    
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 1st constructor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    private AccessSqliteDatabase()
     { 
     } 
-     
-    /** ----------------------------------------------
-    *  2nd constructor ...
-    * -----------------------------------------------
-    */    
-    public DB_sqlite(String parm_my_database, String parm_my_sql_statement)
+
+    
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 2nd constructor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public AccessSqliteDatabase(String parm_my_database, String parm_my_sql_statement)
     { 
       myDatabase = parm_my_database;
       DB_PATH = parm_my_database;
-      
       System.out.println("DB_PATH: " + DB_PATH); 
+      
 
       mySQLStatement = parm_my_sql_statement;
       
-        //DBController dbc = DB_sqlite.getInstance(); 
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// handleDBConnection
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.handleDBConnection(); 
         
         
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// populateVector
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.populateVector(); 
+        
     } 
 
-    /** ----------------------------------------------
-    *  3rd constructor ...
-    * -----------------------------------------------
-    */    
-    public DB_sqlite(String parm_my_database, String parm_my_sql_statement, String parm_sql_type)
+    
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 3rd constructor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public AccessSqliteDatabase(String parm_my_database, String parm_my_sql_statement, String parm_sql_type)
     { 
-      myDatabase = parm_my_database;
-      mySQLStatement = parm_my_sql_statement;
-      mySQLStatementType = parm_sql_type;
+		myDatabase = parm_my_database;
+		mySQLStatement = parm_my_sql_statement;
+		mySQLStatementType = parm_sql_type;
+		System.out.println("DB_sqlite 3rd constructor"); 
       
-      System.out.println("DB_sqlite 3rd constructor"); 
-      
-        //DBController dbc = DB_sqlite.getInstance(); 
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// handleDBConnection
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.handleDBConnection(); 
-        
-      
-
-        
         
         try {
 			stmt = connection.createStatement();
@@ -112,8 +160,14 @@ public class  DB_sqlite {
 			// TODO Auto-generated catch block
 	        System.out.println("stmt FEHLER");
 			e.printStackTrace();
+		
 		}
-        	System.out.println("stmt KEIN FEHLER");        
+    	
+        
+        System.out.println("stmt KEIN FEHLER");        
+        
+        
+        
         try {
         	System.out.println("temp________SQL-INSERT:" + mySQLStatement);        
 			stmt.executeUpdate(mySQLStatement);
@@ -152,48 +206,63 @@ public class  DB_sqlite {
           System.err.println( e.getClass().getName() + ": " + e.getMessage() );
           System.exit(0);
         } */
-        
-        
-        
-        
-        
-        
-        
-        
-        
     } 
     
-    /** ----------------------------------------------
-    *  4th constructor ...
-    * -----------------------------------------------
-    */    
-    DB_sqlite(String parm_my_database, String parm_my_sql_statement, String parm_my_expected_result_type, String XYZ)
+    
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+    // 4th constructor
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    AccessSqliteDatabase(String parm_my_database, String parm_my_sql_statement, String parm_my_expected_result_type, String XYZ)
     { 
       myDatabase = parm_my_database;
       mySQLStatement = parm_my_sql_statement;
       
         //DBController dbc = DB_sqlite.getInstance(); 
         //this.handleDBConnection(); 
-        this.singleDataset(); 
+
+      	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// singleDataset
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        this.getSingleDataset(); 
     } 
+    
+    
+    
     
     /** ++++++++++++++++++++++++++++++++++++++++++++++
     *  accessor methods
     * +++++++++++++++++++++++++++++++++++++++++++++++
     */    
-    /** ----------------------------------------------
-    *  getInstance()
-    *  ...
-    * -----------------------------------------------
-    */
-    public static DB_sqlite getInstance(){ 
+	// =METHODE========================================================================
+	// ================================================================================
+	// AccessSqliteDatabase getInstance
+	// ================================================================================
+	// ================================================================================
+    public static AccessSqliteDatabase getInstance(){ 
         return dbcontroller; 
     } 
-     
-    /** ----------------------------------------------
-    * ... handleDBConnection
-    * -----------------------------------------------
-    */
+    
+    
+
+	// =METHODE========================================================================
+	// ================================================================================
+	// refresh
+	// ================================================================================
+	// ================================================================================
+    public void refresh() { 
+    	populateVector(); 
+    }     
+        
+    
+    
+	// =METHODE========================================================================
+	// ================================================================================
+	// handleDBConnection
+	// ================================================================================
+	// ================================================================================
     void handleDBConnection() { 
         /** ----------------------------------------------
         *  ... 
@@ -231,93 +300,12 @@ public class  DB_sqlite {
 
     
     
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-     *  mutator methods
-     * +++++++++++++++++++++++++++++++++++++++++++++++
-     */
-    /** ----------------------------------------------
-     *  set ...
-     * -----------------------------------------------
-     */
-    void populateVector() { 
-        try { 
-            Statement stmt = connection.createStatement(); 
-            int columns;
-
-            //ResultSet rs = stmt.executeQuery("SELECT * FROM myobjects"); 
-            //ResultSet rs = stmt.executeQuery("SELECT * FROM object_or_source_metadata");
-            ResultSet rs = stmt.executeQuery("SELECT * FROM " + Constants.C_TABLE);
-            
-            /** ----------------------------------------------
-            *  ... column names to vector
-            * -----------------------------------------------
-            */  
-            ResultSetMetaData md = rs.getMetaData();
-            columns = md.getColumnCount();
-
-            //  Get column names
-            for (int i = 1; i <= columns; i++) {
-                columnNames.addElement( md.getColumnName(i) );
-                //System.out.println(md.getColumnName(i));
-            }
-            
-            
-            /** ----------------------------------------------
-            *  ... row values to vector
-            * -----------------------------------------------
-            */  
-            while (rs.next()) { 
-                Vector<Object> row = new Vector<Object>(columns);
-                for (int i = 1; i <= columns; i++) 
-                {
-                    row.addElement( rs.getObject(i) );
-                    System.out.println( rs.getObject(i) );
-                }
-                data.addElement( row );
-                //System.out.println( row );
-            } 
-            
-            rs.close();
-            
-            //connection.close(); 
-            //System.out.println("Connection closed");
-            
-        } catch (SQLException e) { 
-            System.err.println("Couldn't handle DB-Query"); 
-            e.printStackTrace(); 
-        } 
-    } 
-
-    
-    
-    
-    
-    
-    
-    
-    /** ++++++++++++++++++++++++++++++++++++++++++++++
-     *  mutator methods
-     * +++++++++++++++++++++++++++++++++++++++++++++++
-     */
-    /** ----------------------------------------------
-     *  set ...
-     * -----------------------------------------------
-     */
-    public void refresh() { 
-    	populateVector(); 
-    }     
-    
-    
-    
-    
-    
-    
-    
-    /** ----------------------------------------------
-     *  NEE set ...
-     * -----------------------------------------------
-     */
-    private void singleDataset() { 
+	// =METHODE========================================================================
+	// ================================================================================
+	// getSingleDataset
+	// ================================================================================
+	// ================================================================================
+    private void getSingleDataset() { 
         try { 
             Statement stmt = connection.createStatement(); 
             int columns1;
@@ -368,19 +356,65 @@ public class  DB_sqlite {
     
     
     
-    /** ##############################################
-     *  main()
-     * ###############################################
+    
+    /** ++++++++++++++++++++++++++++++++++++++++++++++
+     *  mutator methods
+     * +++++++++++++++++++++++++++++++++++++++++++++++
      */
-    // main()
-    // Der Interpreter nutzt diese Methode als Startpunkt für die Ausführung
-    // des Programms und beendet es wenn ihr Ende erreicht ist
-    public static void main(String[] args) { 
-        DB_sqlite dbc = DB_sqlite.getInstance(); 
-        dbc.handleDBConnection(); 
-        System.out.println("DB_sqlite___public static void main");
-        dbc.populateVector(); 
+	// =METHODE========================================================================
+	// ================================================================================
+	// populateVector
+	// ================================================================================
+	// ================================================================================
+    void populateVector() { 
+        try { 
+            Statement stmt = connection.createStatement(); 
+            int columns;
+
+            //ResultSet rs = stmt.executeQuery("SELECT * FROM myobjects"); 
+            //ResultSet rs = stmt.executeQuery("SELECT * FROM object_or_source_metadata");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + Constants.C_TABLE);
+            
+            /** ----------------------------------------------
+            *  ... column names to vector
+            * -----------------------------------------------
+            */  
+            ResultSetMetaData md = rs.getMetaData();
+            columns = md.getColumnCount();
+
+            //  Get column names
+            for (int i = 1; i <= columns; i++) {
+                columnNames.addElement( md.getColumnName(i) );
+                //System.out.println(md.getColumnName(i));
+            }
+            
+            
+            /** ----------------------------------------------
+            *  ... row values to vector
+            * -----------------------------------------------
+            */  
+            while (rs.next()) { 
+                Vector<Object> row = new Vector<Object>(columns);
+                for (int i = 1; i <= columns; i++) 
+                {
+                    row.addElement( rs.getObject(i) );
+                    System.out.println( rs.getObject(i) );
+                }
+                data.addElement( row );
+                //System.out.println( row );
+            } 
+            
+            rs.close();
+            
+            //connection.close(); 
+            //System.out.println("Connection closed");
+            
+        } catch (SQLException e) { 
+            System.err.println("Couldn't handle DB-Query"); 
+            e.printStackTrace(); 
+        } 
     } 
+
 }
     
 

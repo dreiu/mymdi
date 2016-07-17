@@ -12,19 +12,16 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,20 +30,16 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractButton;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -68,119 +61,221 @@ import javax.swing.table.DefaultTableModel;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Exception;
-import com.ibm.as400.access.AS400File;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
-import com.ibm.as400.access.Record;
-import com.ibm.as400.access.SequentialFile;
-
 import net.wanzenberg.ulf.mymdi.MetadataDetailJFrame;
 import net.wanzenberg.ulf.mymdi.common.AS400ReadDBFile;
 import net.wanzenberg.ulf.mymdi.common.Constants;
 import net.wanzenberg.ulf.mymdi.common.MyOwnTableCellRenderer;
 import net.wanzenberg.ulf.mymdi.common.MyOwnTableModel;
-import net.wanzenberg.ulf.mymdi.database.DB_sqlite;
-import net.wanzenberg.ulf.mymdi.notused.AS400ReadDBFileX;
-
+import net.wanzenberg.ulf.mymdi.database.AccessSqliteDatabase;
 import net.wanzenberg.ulf.mymdi.common.DefaultValues;
+
 
 /**
  *
- * @author Ulf
+ * @author Ulf Wanzenberg
  */
+// ********************************************************************************
+// ********************************************************************************
+// Klasse ApplicationMain
+// ********************************************************************************
+// ********************************************************************************
 public class ApplicationMain extends javax.swing.JFrame implements ActionListener {
 
-	public static JDesktopPane sourceFilePane;
-
-	public static Integer swtchButtonSpecial = 0;
-
-	// -> JInternalFrame(String title, boolean resizable, boolean closable,
-	// boolean maximizable, boolean iconifiable)
-	public static JInternalFrame internalFrameSourceFiles = new JInternalFrame("internalFrame001", false, false, false,
-			false);
-	public static JInternalFrame internalFrameMetadata = new JInternalFrame("internalFrame002", false, false, false,
-			false);
-
+	// ################################################################################
+	// ... 
+	// ################################################################################
+	// ================================================================================
+	// button btnClose 
+	// ================================================================================
 	private JButton btnClose;
+
+
+
+	// ================================================================================
+	// button btnChangePerspective 
+	// ================================================================================
 	private JButton btnChangePerspective;
+
+
+
+	// ================================================================================
+	// button btnRefresh 
+	// ================================================================================
 	private JButton btnRefresh;
 
-	/*
-	 * private JPanel jPanel002 = new JPanel2(); !!! ACHTUNG eigene Klasse
-	 * JPanel2
-	 */
 
-	private JPanel panelMetadata = new JPanel();
-	private JLabel lblMetadataHeadline = new JLabel();
 
+	// ================================================================================
+	// database, database access & SQL 
+	// ================================================================================
 	public static String DATABASE;
-
+	static String myDatabase;
 	static String mySqlStatement;
 	static String mySqlStatementType;
+	public ResultSet rs;
 
-	static String myDatabase;
 
-	private Integer object_id;
 
-	private String aSystemName;
-
-	// container
-	Container container;
-
-	// Menüleiste
+	// ================================================================================
+	// Menu
+	// ================================================================================
 	JMenuBar menuMain;
 	JMenuItem menuItemSQLite;
 	JMenuItem menuItemClose;
-	// Datei/file
 	JMenu menuApplication;
-	// Umgebung/environment
+
 	JMenu menuEnvironment;
 	JMenuItem systemi;
 	JMenuItem usersystemi;
 	JMenuItem connectsystemi;
-	// Sourcen/sources
+
 	JMenu menuSources;
 	JMenuItem menuItemSourceLib;
 	JMenuItem menuItemSourceFile;
-	// Perspektive/perspective
+
 	JMenu menuPerspective;
 	JMenuItem menuItemSource;
 	JMenuItem menuItemSourceMeta;
-	// Info/info
+
 	JMenu menuInfo;
 	JMenuItem about;
 
-	private static JTable jTableSourceList = new JTable();
-	private JTable jTableTest = new JTable();
 
+
+	// ================================================================================
+	// ... label
+	// ================================================================================
 	private JLabel lblSystemi = new JLabel();
 	private JLabel lblUserSystemi = new JLabel();
 	private JLabel lblUserAndSystemi = new JLabel();
+	
+	
+	
+	// ================================================================================
+	// ... auxiliary variables 
+	// ================================================================================
+	private Integer object_id;
+	
 	private String sUserAndSystemi;
 	private String sUserSystemi;
 	private String sSystemi;
 	private String sSourceLib;
 	private String sSourceFile;
 	private String sMenuItemSystemi;
+	
+
+	private JTable jTableTest = new JTable();
+
+	
 	// private String filePathString = "C:\\UWDEV\\mywork.db";
 	private String filePathString = Constants.DB_PATH_MYWORK_002;
 
-	public ResultSet rs;
+
+
+
+	// ... SourceFiles
+	// ################################################################################
+	// ... internalFrameSourceFiles 
+	// ================================================================================
+	// -> JInternalFrame(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable)
+	public static JInternalFrame internalFrameSourceFiles = new JInternalFrame("internalFrameSourceFiles", false, false, false,
+			false);
+			
+	// ... 
+	// ================================================================================
+	// ...
+	public static JDesktopPane sourceFilePane;
+	// ...
+	private static JTable jTableSourceList = new JTable();
+
+
+
+	// ... Metadata
+	// ################################################################################
+
+	// ... internalFrameMetadata
+	// ================================================================================
+	// -> JInternalFrame(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable)
+	public static JInternalFrame internalFrameMetadata = new JInternalFrame("internalFrame002", false, false, false,
+			false);
+
+	// ... 
+	// ================================================================================
+	//private JPanel panelMetadata = new JPanel();
+	//private JLabel lblMetadataHeadline = new JLabel();
+	// ...
+	public static Integer swtchButtonSpecial = 0;
+	// ...
 	public JTable jTableMetadata = new JTable();
 
-	/**
-	 * Creates new form JFrameDesktop
-	 */
+
+
+
+
+
+	
+
+	// =METHODE========================================================================
+	// ================================================================================
+	// !!! main
+	// ================================================================================
+	// ================================================================================
+	public static void main(String args[]) {
+
+		
+		// --------------------------------------------------------------------------------
+		// ...
+		// --------------------------------------------------------------------------------
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
+					null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
+					null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
+					null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
+					null, ex);
+		}
+
+
+		// iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+		// ...
+		// iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+		ApplicationMain myMDI = new ApplicationMain();
+
+	}	
+	
+	
+	
+	// +KONSTRUKTOR++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// Konstruktor ApplicationMain
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public ApplicationMain() {
 
 		// --------------------------------------------------------------------------------
 		// initialize
 		// --------------------------------------------------------------------------------
 		initComponents();
+
+
 
 		// ================================================================================
 		// ================================================================================
@@ -190,19 +285,15 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		// Menüleiste erzeugen
 		menuMain = new JMenuBar();
 
+
+		// ================================================================================
+		// Menu menuApplication
+		// ================================================================================
 		// Menüelemente erzeugen
 		menuApplication = new JMenu("Anwendung");
-		menuEnvironment = new JMenu("Umgebung");
-		menuSources = new JMenu("Quellen");
-		menuPerspective = new JMenu("Perspektive");
-		menuInfo = new JMenu("Info");
-
-		// Menüelemente hinzufügen
+		
+		// Menüelement hinzufügen
 		menuMain.add(menuApplication);
-		menuMain.add(menuEnvironment);
-		menuMain.add(menuSources);
-		menuMain.add(menuPerspective);
-		menuMain.add(menuInfo);
 
 		// Untermenüelemente für Menü menuApplication erzeugen
 		menuItemSQLite = new JMenuItem("SQLite-Datei ...");
@@ -215,6 +306,17 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		// Untermenüelemente für Menü menuApplication hinzufügen
 		menuApplication.add(menuItemClose);
 
+
+
+		// ================================================================================
+		// Menu menuSources
+		// ================================================================================
+		// Menüelemente erzeugen
+		menuSources = new JMenu("Quellen");
+
+		// Menüelement hinzufügen
+		menuMain.add(menuSources);
+
 		// Untermenüelemente für Menü menuSources erzeugen
 		menuItemSourceLib = new JMenuItem("Quellcodebibliothek auswählen");
 		menuItemSourceLib.setBackground(Color.YELLOW);
@@ -222,10 +324,22 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		menuItemSourceFile = new JMenuItem("Quellcodedatei auswählen");
 		menuItemSourceFile.setBackground(Color.YELLOW);
 		menuItemSourceFile.addActionListener(this);
+
 		// Untermenüelemente für Menü menuSources hinzufügen
 		menuSources.add(menuItemSourceLib);
 		menuSources.add(menuItemSourceFile);
 
+
+
+		// ================================================================================
+		// Menu menuPerspective
+		// ================================================================================
+		// Menüelemente erzeugen
+		menuPerspective = new JMenu("Perspektive");
+
+		// Menüelement hinzufügen
+		menuMain.add(menuPerspective);
+		
 		// Untermenüelemente für Menü menuPerspective erzeugen
 		menuItemSource = new JMenuItem("Quellcode(dateien)");
 		menuItemSource.setBackground(Color.CYAN);
@@ -236,6 +350,17 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		menuPerspective.add(menuItemSource);
 		menuPerspective.add(menuItemSourceMeta);
 
+
+
+		// ================================================================================
+		// Menu menuEnvironment
+		// ================================================================================
+		// Menüelemente erzeugen
+		menuEnvironment = new JMenu("Umgebung");
+
+		// Menüelement hinzufügen
+		menuMain.add(menuEnvironment);
+		
 		// Untermenüelemente für Menü menuEnvironment erzeugen
 		systemi = new JMenuItem("???");
 		systemi.setText("System i auswählen");
@@ -249,16 +374,27 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		menuEnvironment.add(usersystemi);
 		menuEnvironment.add(connectsystemi);
 
+
+
+		// ================================================================================
+		// Menu menuEnvironment
+		// ================================================================================
+		// Menüelemente erzeugen
+		menuInfo = new JMenu("Info");
+
+		// Menüelemente hinzufügen
+		menuMain.add(menuInfo);
+
 		// Untermenüelemente für Menü info erzeugen
 		about = new JMenuItem("about");
 		about.addActionListener(this);
 		// Untermenüelemente für Menü info hinzufügen
 		menuInfo.add(about);
 
+
+
 		// ================================================================================
-		// ================================================================================
-		// ???
-		// ================================================================================
+		// Panel menuPanel
 		// ================================================================================
 		JPanel menuPanel = new JPanel();
 		menuPanel.setLayout(new BorderLayout());
@@ -273,11 +409,11 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		
 		
 		
-		
-		
-		
-		
-		
+		// ================================================================================
+		// ================================================================================
+		// Calendar
+		// ================================================================================
+		// ================================================================================
 		// --------------------------------------------------------------------------------
 		// ???
 		// --------------------------------------------------------------------------------
@@ -285,6 +421,13 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		System.out.println(sdf.format(cal.getTime()));
 
+
+
+		// ================================================================================
+		// ================================================================================
+		// Metadata
+		// ================================================================================
+		// ================================================================================
 		// --------------------------------------------------------------------------------
 		// ???
 		// --------------------------------------------------------------------------------
@@ -348,19 +491,16 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		
 		
 		
+		// ================================================================================
+		// ================================================================================
+		// Sources
+		// ================================================================================
+		// ================================================================================
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// displayAS400Sources
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		ApplicationMain.displayAS400Sources();
 
-		
-		
-		
-		// ================================================================================
-		// ================================================================================
-		// appDesktopPane
-		// ================================================================================
-		// ================================================================================
-
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		//doSomethingOnSystemi2();
-		//getAS400SourceData();
 
 		// --------------------------------------------------------------------------------
 		// ... JDesktopPane
@@ -381,11 +521,11 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		internalFrameSourceFiles.addInternalFrameListener(internalListener);
 		Border borderFrameInternalFrameSourceFiles = new BevelBorder(BevelBorder.RAISED);
 		internalFrameSourceFiles.setBorder(borderFrameInternalFrameSourceFiles);
-		internalFrameSourceFiles.setBackground(Color.red);
+		internalFrameSourceFiles.setBackground(Color.yellow);
 
 		sourceFilePane.add(internalFrameSourceFiles);
 		// internalFrame001.setBounds(25, 25, 400, 200);
-		// internalFrameSourceFiles.setSize(600, 300);
+		//internalFrameSourceFiles.setSize(600, 300);
 		try {
 			internalFrameSourceFiles.setMaximum(true);
 		} catch (PropertyVetoException e) {
@@ -489,6 +629,12 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 
 	}
 
+
+
+
+
+
+
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -511,57 +657,28 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
 
-	/**
-	 * @param args
-	 *            the command line arguments
-	 */
+	
+	
+	
+	
+	
 
-	/**
-	 * ++++++++++++++++++++++++++++++++++++++++++++++ main method
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
-		// code (optional) ">
-		/*
-		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
-		 * default look and feel. For details see
-		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.
-		 * html
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(ApplicationMain.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		}
-		// </editor-fold>
 
-		ApplicationMain myVectorTest = new ApplicationMain();
-
-	}
-
-	/**
-	 * ++++++++++++++++++++++++++++++++++++++++++++++ method ...
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	
+	
+	
+	// =METHODE========================================================================
+	// ================================================================================
+	// ... getAS400SourceData
+	// ================================================================================
+	// ================================================================================
 	private void getAS400SourceData() {
 		// Get the system name and the command to run from the user
+
+		// --------------------------------------------------------------------------------
+		// implement menuPanel
+		// --------------------------------------------------------------------------------
+		
 		String server = "as400.holgerscherer.de";
 		String user = "DREIU";
 		String pass = "HLaxness";
@@ -603,7 +720,7 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		}
 
 		// Variante 2
-		FillTable(jTableTest, "SELECT * FROM dreiu1/cusmsp;");
+		fillTableFromCertainDatabaseTableAndCertainUser(jTableTest, "SELECT * FROM dreiu1/cusmsp;");
 
 		// internalFrame001.removeAll();
 		// .repaint();
@@ -748,10 +865,17 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 
 	}
 
+	
+	
+	
+	
+	// ================================================================================
+	// ================================================================================
+	// ... userGetAS400SourceData
+	// ================================================================================
+	// ================================================================================
 	/**
-	 * ++++++++++++++++++++++++++++++++++++++++++++++ method ...
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++
-	 * 
+
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws AS400SecurityException
@@ -1151,7 +1275,7 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 						+ object_id;
 				System.out.println("!!!!!!!!!!!!!!!!! SQL:" + mySqlStatement);
 				mySqlStatementType = "UPDATE";
-				DB_sqlite aSQLiteUpdateMetadata = new DB_sqlite(myDatabase, mySqlStatement, mySqlStatementType);
+				AccessSqliteDatabase aSQLiteUpdateMetadata = new AccessSqliteDatabase(myDatabase, mySqlStatement, mySqlStatementType);
 
 				// dlgChangeDialogueMetadata schließen
 				dlgChangeDialogueMetadata.dispose();
@@ -1291,7 +1415,7 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		System.out.println("!!!!!!!!!!!!!!!!! Pfad:" + filePathString + "   myDatabase:" + myDatabase.toString());
 		// mySqlStatement = "SELECT * FROM object_or_source_metadata";
 		mySqlStatement = "SELECT * FROM " + Constants.C_TABLE;
-		DB_sqlite aSQLite_access = new DB_sqlite(myDatabase, mySqlStatement);
+		AccessSqliteDatabase aSQLite_access = new AccessSqliteDatabase(myDatabase, mySqlStatement);
 
 		// ... TableModel ...
 		// -----------------------------------------------
@@ -1794,7 +1918,7 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 				// Variante 1
 				JTable table1 = new JTable(buildTableModel(rs));
 				// Variante 2
-				FillTable(jTableTest, "SELECT * FROM dreiu1/cusmsp;");
+				fillTableFromCertainDatabaseTableAndCertainUser(jTableTest, "SELECT * FROM dreiu1/cusmsp;");
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -2076,13 +2200,11 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 	}
 
 	// für Variante 2
-	public void FillTable(JTable table, String Query) {
+	public void fillTableFromCertainDatabaseTableAndCertainUser(JTable table, String Query) {
 
-		// ---------------------------------------------------
-		// ---------------------------------------------------
-		//
-		// ---------------------------------------------------
-		// ---------------------------------------------------
+        // --------------------------------------------------- 
+    	// ... Define Connection ...
+    	// --------------------------------------------------- 
 		String DRIVER = "com.ibm.as400.access.AS400JDBCDriver";
 		// String URL = "jdbc:as400://" +
 		// props.getProperty("local_system").trim() +
@@ -2091,16 +2213,24 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 		Connection conn = null;
 		String sql = null;
 
-		// Connect to iSeries
+		
+        // --------------------------------------------------- 
+        // Connect to iSeries                                         
+    	// --------------------------------------------------- 
 		try {
 			Class.forName(DRIVER);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// conn =
-		// DriverManager.getConnection(URL,props.getProperty("userId").trim(),props.getProperty("password").trim());
+
+		
+        
+        // --------------------------------------------------- 
+    	// ... SQL-statement and execution
+    	// --------------------------------------------------- 
 		try {
+            //conn = DriverManager.getConnection(URL,props.getProperty("userId").trim(),props.getProperty("password").trim());   
 			conn = DriverManager.getConnection(URL, "DREIU", "HLaxness");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -2125,12 +2255,19 @@ public class ApplicationMain extends javax.swing.JFrame implements ActionListene
 			e.printStackTrace();
 		}
 
-		// ResultSet rs = stat.executeQuery(Query);
-
-		// To remove previously added rows
+    	
+        // --------------------------------------------------- 
+    	// ... remove previously added rows from DefaultTableModel
+    	// --------------------------------------------------- 
 		while (table.getRowCount() > 0) {
 			((DefaultTableModel) table.getModel()).removeRow(0);
 		}
+		
+		
+        
+        // --------------------------------------------------- 
+    	// ... add/insert rows into DefaultTableModel
+    	// --------------------------------------------------- 
 		int columns = 0;
 		try {
 			columns = rs.getMetaData().getColumnCount();
